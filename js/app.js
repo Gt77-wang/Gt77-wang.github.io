@@ -918,8 +918,7 @@ function bindEvents() {
       case 'r':
         if (!e.ctrlKey && !e.metaKey) { resetAll(); }
         break;}
-  });
-}
+  };
 
 // ==================== COMMAND INPUT ====================
 function setupVoice() {
