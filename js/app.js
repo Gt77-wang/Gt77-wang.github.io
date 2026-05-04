@@ -917,7 +917,7 @@ function bindEvents() {
         break;
       case 'r':
         if (!e.ctrlKey && !e.metaKey) { resetAll(); }
-        break;
+        break;}
   });
 }
 
