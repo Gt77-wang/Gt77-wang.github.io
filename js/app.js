@@ -456,7 +456,7 @@ function resetAll() {
   currentSpeed = 0;
   batteryLevel = BATTERY_FULL;
   updateBatteryDisplay();
-  $route1Btn.classList.remove('selected');
+ // $route1Btn.classList.remove('selected');
   $route2Btn.classList.remove('selected');
   updateUIForStopped();
   log('🔄 已重置所有状态');
@@ -868,14 +868,6 @@ function showMapHint(text) {
 
 // ==================== EVENTS ====================
 function bindEvents() {
-  // // Mode switching (已禁用 — 仅保留自由路径模式)
-  // $modeFree.addEventListener('click', () => switchMode('free'));
-  // $modePreset.addEventListener('click', () => switchMode('preset'));
-
-  // // Route selection (已禁用)
-  // $route1Btn.addEventListener('click', () => selectPresetRoute(1));
-  // $route2Btn.addEventListener('click', () => selectPresetRoute(2));
-
   // Controls
   $btnStart.addEventListener('click', startInspection);
   $btnStop.addEventListener('click', stopInspection);
@@ -926,13 +918,6 @@ function bindEvents() {
       case 'r':
         if (!e.ctrlKey && !e.metaKey) { resetAll(); }
         break;
-      // case '1':  // 预设路线已禁用
-      //   if (currentMode === 'preset') selectPresetRoute(1);
-      //   break;
-      // case '2':
-      //   if (currentMode === 'preset') selectPresetRoute(2);
-      //   break;
-    }
   });
 }
 
@@ -1006,47 +991,12 @@ function handleVoiceCommand(text) {
   const cmd = text.trim().replace(/[，。！？,!?]/g, '');
   log('📝 指令: "' + cmd + '"');
 
-  // // 3教 → 游泳馆 (已禁用)
-  // if (/3教.*游泳馆|游泳馆.*3教|三教.*游泳馆|游泳馆.*三教/.test(cmd)) {
-  //   if (currentMode !== 'free') switchMode('free');
-  //   resetAll();
-  //   pathPoints = [...ROUTE_3TO_POOL];
-  //   totalCheckpoints = pathPoints.length;
-  //   updatePathPolyline();
-  //   map.setFitView(pathPoints, false, [360, 80, 300, 80]);
-  //   createCarMarker(pathPoints[0]);
-  //   $progressDetail.textContent = '3教 → 游泳馆';
-  //   $checkpointValue.textContent = `0/${pathPoints.length}`;
-  //   $progressBar.style.width = '0%';
-  //   $progressPercent.textContent = '0%';
-  //   const replies = [
-  //     '好的，我这就带你去游泳馆 🏊',
-  //     '收到！正在规划去游泳馆的路线~',
-  //     '明白！3教 → 游泳馆，出发！',
-  //     '好嘞，游泳馆走起！',
-  //   ];
-  //   const msg = replies[Math.floor(Math.random() * replies.length)];
-  //   showMapHint(msg);
-  //   log('🗺️ 加载路线: 3教 → 游泳馆');
-  //   return;
-  // }
-
   if (/开始巡检|启动|出发|开巡/.test(cmd)) {
     startInspection();
   } else if (/停止|停下|暂停/.test(cmd)) {
     stopInspection();
   } else if (/重置|清除|清空/.test(cmd)) {
     resetAll();
-  // } else if (/路线一|路线1|第一条|环路/.test(cmd)) {  // 预设路线已禁用
-  //   switchMode('preset');
-  //   selectPresetRoute(1);
-  // } else if (/路线二|路线2|第二条|教学区/.test(cmd)) {
-  //   switchMode('preset');
-  //   selectPresetRoute(2);
-  // } else if (/自由模式|手动|自由路径/.test(cmd)) {
-  //   switchMode('free');
-  // } else if (/预设模式|预设路线|固定路线/.test(cmd)) {
-  //   switchMode('preset');
   } else if (/添加点|加点|设点|标记位置|这里/.test(cmd) && map) {
     // if (currentMode !== 'free') switchMode('free');  // 仅自由模式，无需切换
     const center = map.getCenter();
@@ -1090,65 +1040,6 @@ function handleVoiceCommand(text) {
     $cmdHint.textContent = '可用: 开始/停止/重置/添加点/放大/缩小/发送目标';
   }
 }
-
-// function switchMode(mode) {  // 已禁用 — 仅保留自由路径模式
-//   if (isRunning) {
-//     log('⚠️ 巡检进行中，请先停止再切换模式', 'warn');
-//     return;
-//   }
-//   currentMode = mode;
-//   resetAll();
-//
-//   if (mode === 'free') {
-//     $modeFree.classList.add('active');
-//     $modePreset.classList.remove('active');
-//     $presetRoutes.style.display = 'none';
-//     $freeHint.style.display = 'block';
-//     showMapHint('🖱️ 点击地图添加巡检路径点');
-//     log('🖱️ 切换至自由路径模式 — 点击地图添加点位');
-//   } else {
-//     $modePreset.classList.add('active');
-//     $modeFree.classList.remove('active');
-//     $presetRoutes.style.display = 'block';
-//     $freeHint.style.display = 'none';
-//     log('📋 切换至预设路线模式 — 请选择巡检路线');
-//   }
-// }
-//
-// function selectPresetRoute(routeNum) {  // 已禁用 — 预设路线功能已关闭
-//   if (isRunning) {
-//     log('⚠️ 巡检进行中，请先停止再切换路线', 'warn');
-//     return;
-//   }
-//
-//   // Clear previous
-//   if (pathPolyline) { map.remove(pathPolyline); pathPolyline = null; }
-//   if (trajectoryPolyline) { map.remove(trajectoryPolyline); trajectoryPolyline = null; }
-//   if (carMarker) { map.remove(carMarker); carMarker = null; }
-//   if (gpsTargetMarker) { map.remove(gpsTargetMarker); gpsTargetMarker = null; }
-//   if (gpsCarGpsMarker) { map.remove(gpsCarGpsMarker); gpsCarGpsMarker = null; }
-//   clickMarkers.forEach(m => map.remove(m));
-//   clickMarkers = [];
-//
-//   selectedRoute = routeNum;
-//   pathPoints = routeNum === 1 ? [...ROUTE_1] : [...ROUTE_2];
-//   totalCheckpoints = pathPoints.length;
-//   $checkpointValue.textContent = `0/${totalCheckpoints}`;
-//   $progressBar.style.width = '0%';
-//   $progressPercent.textContent = '0%';
-//   $progressDetail.textContent = '路线已加载，点击开始...';
-//   $progressETA.textContent = '';
-//
-//   $route1Btn.classList.toggle('selected', routeNum === 1);
-//   $route2Btn.classList.toggle('selected', routeNum === 2);
-//
-//   updatePathPolyline();
-//   map.setFitView(pathPoints, false, [360, 80, 300, 80]);
-//   createCarMarker(pathPoints[0]);
-//
-//   const name = routeNum === 1 ? '校园主环路' : '教学区巡检';
-//   log(`📍 已加载路线 ${routeNum} · ${name} · ${pathPoints.length} 个点位`);
-// }
 
 // ==================== BOOT ====================
 window.addEventListener('DOMContentLoaded', init);
